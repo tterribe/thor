@@ -426,7 +426,7 @@ int main(int argc, char **argv)
       fflush(stdout);
 
       /* Write compressed bits for this frame to file */
-      flush_bytebuf(&stream, strfile);
+      flush_all_bits(&stream, strfile);
 
       if (reconfile){
         /* Write output frame */
@@ -458,7 +458,6 @@ int main(int argc, char **argv)
   }
 
 
-  flush_all_bits(&stream, strfile);
   bit_rate_in_kbps = 0.001*params->frame_rate*(double)acc_num_bits/num_encoded_frames;
 
   /* Finised encoding sequence */

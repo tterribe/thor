@@ -183,7 +183,7 @@ int main(int argc, char** argv)
     }
     decoder_info.deblock_data = (deblock_data_t *)malloc((height/MIN_PB_SIZE) * (width/MIN_PB_SIZE) * sizeof(deblock_data_t));
 
-    while (stream.bitcnt < 8*input_file_size - 8)
+    do
     {
       decoder_info.frame_info.decode_order_frame_num = decode_frame_num;
       decoder_info.frame_info.display_frame_num = (frame_count/sub_gop)*sub_gop+reorder_frame_offset(frame_count % sub_gop, sub_gop);
@@ -207,6 +207,7 @@ int main(int argc, char** argv)
       }
       frame_count++;
     }
+    while (!initbits_dec(infile, &stream));
     // Output the tail
     int i,j;
     for (i=1; i<=MAX_REORDER_BUFFER; ++i) {
