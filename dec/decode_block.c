@@ -521,7 +521,9 @@ int decode_super_mode(decoder_info_t *decoder_info, int size, int decode_rectang
 
   if (frame_type==I_FRAME){
     decoder_info->mode = MODE_INTRA;
-    split_flag = getbits(stream,1);
+    if (size > MIN_BLOCK_SIZE){
+      split_flag = getbits(stream,1);
+    }
     return split_flag;
   }
   if (decode_rectangular_size){

@@ -384,7 +384,7 @@ void write_super_mode(stream_t *stream,write_data_t *write_data){
       putbits(code+1,1,stream);
 
   }
-  else{
+  else if (size > MIN_BLOCK_SIZE){
     putbits(1,0,stream); // To signal split_flag = 0
   }
 }
