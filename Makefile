@@ -20,6 +20,7 @@ endif
 COMMON_SOURCES = \
 	common/common_block.c \
 	common/common_frame.c \
+	common/entcode.c \
 	common/transform.c \
 	common/intra_prediction.c \
 	common/inter_prediction.c \
@@ -30,6 +31,7 @@ COMMON_SOURCES = \
 ENCODER_SOURCES = \
 	enc/encode_block.c \
 	enc/encode_frame.c \
+	enc/entenc.c \
 	enc/mainenc.c \
 	enc/putbits.c \
 	enc/putvlc.c \
@@ -40,6 +42,7 @@ ENCODER_SOURCES = \
 
 DECODER_SOURCES = \
 	dec/decode_block.c \
+	dec/entdec.c \
 	dec/getbits.c \
 	dec/getvlc.c \
 	dec/maindec.c \

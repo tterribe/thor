@@ -51,7 +51,7 @@ void clpf_frame(decoder_info_t *decoder_info){
   int stride_y = decoder_info->rec->stride_y;
   int stride_c = decoder_info->rec->stride_c;
 
-  int bit_start = stream->bitcnt;
+  int bit_start = od_ec_dec_tell(&stream->ec);
   for (k=0;k<num_sb_ver;k++){
     for (l=0;l<num_sb_hor;l++){
       xpos = l*MAX_BLOCK_SIZE;
@@ -82,7 +82,8 @@ void clpf_frame(decoder_info_t *decoder_info){
       } //if (filter_flag)
     }
   }
-  decoder_info->bit_count.clpf[frame_type] += (stream->bitcnt - bit_start);
+  decoder_info->bit_count.clpf[frame_type] +=
+   (od_ec_dec_tell(&stream->ec) - bit_start);
 }
 
 void decode_frame(decoder_info_t *decoder_info)
@@ -94,7 +95,7 @@ void decode_frame(decoder_info_t *decoder_info)
   int num_sb_ver = (height + MAX_BLOCK_SIZE - 1)/MAX_BLOCK_SIZE;
   stream_t *stream = decoder_info->stream;
 
-  int bit_start = stream->bitcnt;
+  int bit_start = od_ec_dec_tell(&stream->ec);
 
   decoder_info->frame_info.frame_type = getbits(stream,1);
   int qp = getbits(stream,8);
@@ -105,7 +106,8 @@ void decode_frame(decoder_info_t *decoder_info)
     decoder_info->frame_info.ref_array[r] = getbits(stream,4);
   }
 
-  decoder_info->bit_count.frame_header[decoder_info->frame_info.frame_type] += (stream->bitcnt - bit_start);
+  decoder_info->bit_count.frame_header[decoder_info->frame_info.frame_type] +=
+   (od_ec_dec_tell(&stream->ec) - bit_start);
   decoder_info->bit_count.frame_type[decoder_info->frame_info.frame_type] += 1;
   decoder_info->frame_info.qp = qp;
   decoder_info->frame_info.qpb = qp;
