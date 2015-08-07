@@ -424,7 +424,7 @@ void decode_block(decoder_info_t *decoder_info,int size,int ypos,int xpos){
 }
 
 #if NEW_BLOCK_STRUCTURE
-int decode_super_mode(decoder_info_t *decoder_info, int size, int decode_rectangular_size){
+int decode_super_mode(decoder_info_t *decoder_info, int size, int decode_this_size){
   stream_t *stream = decoder_info->stream;
   block_context_t *block_context = decoder_info->block_context;
   frame_type_t frame_type = decoder_info->frame_info.frame_type;
@@ -438,7 +438,7 @@ int decode_super_mode(decoder_info_t *decoder_info, int size, int decode_rectang
   if (frame_type==I_FRAME)
     return 0;
 
-  if (decode_rectangular_size)
+  if (!decode_this_size)
     return 0;
 
   num_ref = decoder_info->frame_info.num_ref;
@@ -507,7 +507,7 @@ int decode_super_mode(decoder_info_t *decoder_info, int size, int decode_rectang
   return split_flag;
 }
 #else
-int decode_super_mode(decoder_info_t *decoder_info, int size, int decode_rectangular_size){
+int decode_super_mode(decoder_info_t *decoder_info, int size, int decode_this_size){
   stream_t *stream = decoder_info->stream;
   block_context_t *block_context = decoder_info->block_context;
 
@@ -521,12 +521,13 @@ int decode_super_mode(decoder_info_t *decoder_info, int size, int decode_rectang
 
   if (frame_type==I_FRAME){
     decoder_info->mode = MODE_INTRA;
-    if (size > MIN_BLOCK_SIZE){
+    split_flag = !decode_this_size;
+    if (size > MIN_BLOCK_SIZE && decode_this_size){
       split_flag = getbits(stream,1);
     }
     return split_flag;
   }
-  if (decode_rectangular_size){
+  if (!decode_this_size){
     split_flag = !getbits(stream,1);
     return split_flag;
   }
@@ -626,13 +627,13 @@ void process_block_dec(decoder_info_t *decoder_info,int size,int yposY,int xposY
       if (split_flag==0) mode = MODE_SKIP;
     }
     else{
-      split_flag = decode_super_mode(decoder_info,size,decode_rectangular_size);
+      split_flag = decode_super_mode(decoder_info,size,decode_this_size);
       mode = decoder_info->mode;
     }
   } //if (!I_FRAME)
   decoder_info->mode = mode;
 #else
-  split_flag = decode_super_mode(decoder_info,size,decode_rectangular_size);  
+  split_flag = decode_super_mode(decoder_info,size,decode_this_size);
   mode = decoder_info->mode;
 #endif
   

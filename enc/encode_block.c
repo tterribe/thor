@@ -2264,7 +2264,9 @@ int process_block(encoder_info_t *encoder_info,int size,int ypos,int xpos,int qp
     int code;
     if (frame_type == I_FRAME || encode_this_size){
       if (frame_type==I_FRAME){
-        putbits(1,1,stream);
+        if (encode_this_size){
+          putbits(1,1,stream);
+        }
       }
       else{
         code = 1; //Split
