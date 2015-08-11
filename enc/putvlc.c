@@ -31,7 +31,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "putvlc.h"
 #include "simd.h"
 
-int put_vlc(unsigned int n,unsigned int cn,stream_t *str)
+int put_vlc(unsigned int n,unsigned int cn,outbits *str)
 {
   unsigned int len,tmp;
   unsigned int code;

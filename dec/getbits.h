@@ -35,9 +35,9 @@ typedef struct
   od_ec_dec ec;
   FILE *infile;
   unsigned char *buf;
-} stream_t;
+} inbits;
 
-int initbits_dec(FILE *infile, stream_t *str);
+int initbits_dec(FILE *infile, inbits *str);
 
 static inline unsigned bitreverse(unsigned val)
 {
@@ -48,16 +48,16 @@ static inline unsigned bitreverse(unsigned val)
   return ((val >> 1) & 0x55555555U) | ((val << 1) & 0xAAAAAAAAUL);
 }
 
-unsigned int showbits(stream_t *str, int n);
+unsigned int showbits(inbits *str, int n);
 
-static inline unsigned int getbits1(stream_t *str)
+static inline unsigned int getbits1(inbits *str)
 {
   return od_ec_dec_bits(&str->ec, 1);
 }
 
-void flushbits(stream_t *str, int n);
+void flushbits(inbits *str, int n);
 
-static inline unsigned int getbits(stream_t *str, int n)
+static inline unsigned int getbits(inbits *str, int n)
 {
   return n > 0 ? bitreverse(od_ec_dec_bits(&str->ec, n) << (32 - n)) : 0;
 }

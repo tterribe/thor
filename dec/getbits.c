@@ -30,7 +30,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "global.h"
 #include "getbits.h"
 
-int initbits_dec(FILE *infile, stream_t *str)
+int initbits_dec(FILE *infile, inbits *str)
 {
   uint8_t frame_bytes_buf[4];
   uint32_t length;
@@ -62,7 +62,7 @@ int initbits_dec(FILE *infile, stream_t *str)
   Even relatively modest values like 100 would work fine.*/
 #define OD_EC_LOTS_OF_BITS (0x4000)
 
-unsigned int showbits(stream_t *str, int n)
+unsigned int showbits(inbits *str, int n)
 {
   od_ec_window window;
   int available;
@@ -95,7 +95,7 @@ unsigned int showbits(stream_t *str, int n)
   return bitreverse(ret << (32 - n));
 }
 
-void flushbits(stream_t *str, int n)
+void flushbits(inbits *str, int n)
 {
   OD_ASSERT(str->ec.nend_bits >= n);
   str->ec.end_window >>= n;

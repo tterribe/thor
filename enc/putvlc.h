@@ -31,7 +31,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "putbits.h"
 #include "mainenc.h"
 
-int put_vlc(unsigned int n,unsigned int cn,stream_t *str);
+int put_vlc(unsigned int n,unsigned int cn,outbits *str);
 int quote_vlc(unsigned int n,unsigned int cn);
 
 #endif

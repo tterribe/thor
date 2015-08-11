@@ -393,13 +393,13 @@ int quantize (int16_t *coeff, int16_t *coeffq, int qp, int size, int frame_type,
     }
 
     int start_bits,end_bits,write_bits;
-    stream_t tmp_stream;
+    outbits tmp_stream;
     tmp_stream.bitstream = (uint8_t *)malloc(2*MAX_QUANT_SIZE*MAX_QUANT_SIZE * sizeof(uint8_t));
     tmp_stream.bitbuf = 0;
     tmp_stream.bitrest = 32;
     tmp_stream.bytepos = 0;
     tmp_stream.bytesize = 2*MAX_QUANT_SIZE*MAX_QUANT_SIZE;
-    stream_t *stream = &tmp_stream;
+    outbits *stream = &tmp_stream;
 
     start_bits = get_bit_pos(stream);
     write_coeff(stream,coeffq,size,chroma_flag);
@@ -877,7 +877,7 @@ int encode_and_reconstruct_block (encoder_info_t *encoder_info, uint8_t *orig, i
     return cbp;
 }
 
-int encode_block(encoder_info_t *encoder_info, stream_t *stream, block_info_t *block_info,pred_data_t *pred_data, block_mode_t mode,int tb_param)
+int encode_block(encoder_info_t *encoder_info, outbits *stream, block_info_t *block_info,pred_data_t *pred_data, block_mode_t mode,int tb_param)
 {
   int size = block_info->block_pos.size;
   int yposY = block_info->block_pos.ypos;
@@ -1462,7 +1462,7 @@ int mode_decision_rdo(encoder_info_t *encoder_info,block_info_t *block_info)
   int width = encoder_info->width;
   int height = encoder_info->height;
 
-  stream_t *stream = encoder_info->stream;
+  outbits *stream = encoder_info->stream;
 
   yuv_frame_t *rec = encoder_info->rec;
   yuv_frame_t *ref;
@@ -2117,7 +2117,7 @@ int process_block(encoder_info_t *encoder_info,int size,int ypos,int xpos,int qp
   int height = encoder_info->height;
   int width = encoder_info->width;
   uint32_t cost,cost_small;
-  stream_t *stream = encoder_info->stream;
+  outbits *stream = encoder_info->stream;
   double lambda = encoder_info->frame_info.lambda;
   int nbit,early_skip_flag,tb_split;
   frame_type_t frame_type = encoder_info->frame_info.frame_type;

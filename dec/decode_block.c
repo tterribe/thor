@@ -167,7 +167,7 @@ void decode_block(decoder_info_t *decoder_info,int size,int ypos,int xpos){
   uint8_t *ref_u = ref->u + ref_posC;
   uint8_t *ref_v = ref->v + ref_posC;
 
-  stream_t *stream = decoder_info->stream;
+  inbits *stream = decoder_info->stream;
 
   /* Read data from bitstream */
   block_info_dec_t block_info;
@@ -425,7 +425,7 @@ void decode_block(decoder_info_t *decoder_info,int size,int ypos,int xpos){
 
 #if NEW_BLOCK_STRUCTURE
 int decode_super_mode(decoder_info_t *decoder_info, int size, int decode_this_size){
-  stream_t *stream = decoder_info->stream;
+  inbits *stream = decoder_info->stream;
   block_context_t *block_context = decoder_info->block_context;
   frame_type_t frame_type = decoder_info->frame_info.frame_type;
 
@@ -508,7 +508,7 @@ int decode_super_mode(decoder_info_t *decoder_info, int size, int decode_this_si
 }
 #else
 int decode_super_mode(decoder_info_t *decoder_info, int size, int decode_this_size){
-  stream_t *stream = decoder_info->stream;
+  inbits *stream = decoder_info->stream;
   block_context_t *block_context = decoder_info->block_context;
 
   frame_type_t frame_type = decoder_info->frame_info.frame_type;
@@ -595,7 +595,7 @@ void process_block_dec(decoder_info_t *decoder_info,int size,int yposY,int xposY
 {
   int width = decoder_info->width;
   int height = decoder_info->height;
-  stream_t *stream = decoder_info->stream;
+  inbits *stream = decoder_info->stream;
   frame_type_t frame_type = decoder_info->frame_info.frame_type;
   int split_flag = 0;
 

@@ -36,7 +36,7 @@ extern int chroma_qp[52];
 void clpf_frame(decoder_info_t *decoder_info){
 
   /* Constrained low-pass filter (CLPF) */
-  stream_t *stream = decoder_info->stream;
+  inbits *stream = decoder_info->stream;
   frame_type_t frame_type = decoder_info->frame_info.frame_type;
   int height = decoder_info->height;
   int width = decoder_info->width;
@@ -93,7 +93,7 @@ void decode_frame(decoder_info_t *decoder_info)
   int k,l;
   int num_sb_hor = (width + MAX_BLOCK_SIZE - 1)/MAX_BLOCK_SIZE;
   int num_sb_ver = (height + MAX_BLOCK_SIZE - 1)/MAX_BLOCK_SIZE;
-  stream_t *stream = decoder_info->stream;
+  inbits *stream = decoder_info->stream;
 
   int bit_start = od_ec_dec_tell(&stream->ec);
 

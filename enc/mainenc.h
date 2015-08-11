@@ -122,7 +122,7 @@ typedef struct
   yuv_frame_t *orig;
   yuv_frame_t *rec;
   yuv_frame_t *ref[MAX_REF_FRAMES];
-  stream_t *stream;
+  outbits *stream;
   deblock_data_t *deblock_data;
   int width;
   int height;
