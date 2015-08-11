@@ -118,7 +118,7 @@ int main(int argc, char** argv)
 {
     FILE *infile,*outfile;
     decoder_info_t decoder_info;
-    stream_t stream;
+    inbits stream;
     yuv_frame_t rec[MAX_REORDER_BUFFER];
     yuv_frame_t ref[MAX_REF_FRAMES];
     int rec_available[MAX_REORDER_BUFFER]={0};

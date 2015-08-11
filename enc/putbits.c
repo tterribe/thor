@@ -30,7 +30,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "global.h"
 #include "putbits.h"
 
-void flush_all_bits(stream_t *str, FILE *outfile)
+void flush_all_bits(outbits *str, FILE *outfile)
 {
   unsigned char *buf;
   uint32_t frame_bytes;

@@ -43,7 +43,7 @@ extern int zigzag64[64];
 extern int zigzag256[256];
 extern int super_table[8][20];
 
-void read_mv(stream_t *stream,mv_t *mv,mv_t *mvp)
+void read_mv(inbits *stream,mv_t *mv,mv_t *mvp)
 {
     mv_t mvd;
     int code;
@@ -98,7 +98,7 @@ int find_index(int code, int maxrun, int type){
   return index;
 }
 
-void read_coeff(stream_t *stream,int16_t *coeff,int size,int type){
+void read_coeff(inbits *stream,int16_t *coeff,int size,int type){
 
   int16_t scoeff[MAX_QUANT_SIZE*MAX_QUANT_SIZE];
   int i,j,levelFlag,sign,level,pos,index,run,tmp,vlc,maxrun,code,vlc_adaptive;
@@ -207,7 +207,7 @@ void read_coeff(stream_t *stream,int16_t *coeff,int size,int type){
   }
 }
 
-int read_delta_qp(stream_t *stream){
+int read_delta_qp(inbits *stream){
   int abs_delta_qp,sign_delta_qp,delta_qp;
   sign_delta_qp = 0;
   abs_delta_qp = get_vlc(0,stream);
@@ -217,7 +217,7 @@ int read_delta_qp(stream_t *stream){
   return delta_qp;
 }
 
-int read_block(decoder_info_t *decoder_info,stream_t *stream,block_info_dec_t *block_info, frame_type_t frame_type)
+int read_block(decoder_info_t *decoder_info,inbits *stream,block_info_dec_t *block_info, frame_type_t frame_type)
 {
   int width = decoder_info->width;
   int height = decoder_info->height;

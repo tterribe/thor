@@ -35,8 +35,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "global.h"
 #include "getbits.h"
 
-int read_delta_qp(stream_t *stream);
-void read_mv(stream_t *stream,mv_t *mv,mv_t *mvp);
-void read_coeff(stream_t *stream,int16_t *coeff,int size);
-int read_block(decoder_info_t *decoder_info,stream_t *stream,block_info_dec_t *block_info,frame_type_t frame_type);
+int read_delta_qp(inbits *stream);
+void read_mv(inbits *stream,mv_t *mv,mv_t *mvp);
+void read_coeff(inbits *stream,int16_t *coeff,int size);
+int read_block(decoder_info_t *decoder_info,inbits *stream,block_info_dec_t *block_info,frame_type_t frame_type);
 

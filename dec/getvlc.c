@@ -30,7 +30,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "getbits.h"
 #include "getvlc.h"
 
-int get_vlc0_limit(int maxbit,stream_t *str){
+int get_vlc0_limit(int maxbit,inbits *str){
   int code;
   int tmp = 0;
   int nbit = 0;
@@ -42,7 +42,7 @@ int get_vlc0_limit(int maxbit,stream_t *str){
   return code;
 }
 
-int get_vlc(int n,stream_t *str)
+int get_vlc(int n,inbits *str)
 {
   int cw,bit,zeroes=0,done=0,tmp;
   unsigned int val = 0;

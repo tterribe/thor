@@ -47,7 +47,7 @@ extern int zigzag256[256];
 extern int super_table[8][20];
 extern int YPOS,XPOS;
 
-void write_mv(stream_t *stream,mv_t *mv,mv_t *mvp)
+void write_mv(outbits *stream,mv_t *mv,mv_t *mvp)
 {
     uint16_t  mvabs,mvsign;
     mv_t mvd;
@@ -107,7 +107,7 @@ int find_code(int run, int level, int maxrun, int type,int eob){
   return cn;
 }
 
-void write_coeff(stream_t *stream,int16_t *coeff,int size,int type)
+void write_coeff(outbits *stream,int16_t *coeff,int size,int type)
 {
   int16_t scoeff[MAX_QUANT_SIZE*MAX_QUANT_SIZE];
   int i,j,len,pos,c;
@@ -252,7 +252,7 @@ void write_coeff(stream_t *stream,int16_t *coeff,int size,int type)
   }
 }
 
-int write_delta_qp(stream_t *stream, int delta_qp){
+int write_delta_qp(outbits *stream, int delta_qp){
   int len;
   int abs_delta_qp = abs(delta_qp);
   int sign_delta_qp = delta_qp < 0 ? 1 : 0;
@@ -265,7 +265,7 @@ int write_delta_qp(stream_t *stream, int delta_qp){
 }
 
 #if NEW_BLOCK_STRUCTURE
-void write_super_mode(stream_t *stream,write_data_t *write_data){
+void write_super_mode(outbits *stream,write_data_t *write_data){
 
   int size = write_data->size;
   block_mode_t mode = write_data->mode;
@@ -313,7 +313,7 @@ void write_super_mode(stream_t *stream,write_data_t *write_data){
   }
 }
 #else
-void write_super_mode(stream_t *stream,write_data_t *write_data){
+void write_super_mode(outbits *stream,write_data_t *write_data){
 
   int size = write_data->size;
   block_mode_t mode = write_data->mode;
@@ -390,7 +390,7 @@ void write_super_mode(stream_t *stream,write_data_t *write_data){
 }
 #endif
 
-int write_block(stream_t *stream,write_data_t *write_data){
+int write_block(outbits *stream,write_data_t *write_data){
 
   int start_bits,end_bits;
   int size = write_data->size;

@@ -163,7 +163,7 @@ int main(int argc, char **argv)
   }
 
   /* Initialize main bit stream */
-  stream_t stream;
+  outbits stream;
   od_ec_enc_init(&stream, MAX_BUFFER_SIZE);
 
   /* Configure encoder */

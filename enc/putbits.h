@@ -33,11 +33,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdint.h>
 #include "entenc.h"
 
-typedef struct od_ec_enc stream_t;
+typedef struct od_ec_enc outbits;
 
 typedef struct od_ec_enc stream_pos_t;
 
-void flush_all_bits(stream_t *str, FILE *outfile);
+void flush_all_bits(outbits *str, FILE *outfile);
 
 static inline uint32_t bitreverse(uint32_t val)
 {
@@ -48,23 +48,23 @@ static inline uint32_t bitreverse(uint32_t val)
   return ((val >> 1) & 0x55555555U) | ((val << 1) & 0xAAAAAAAAUL);
 }
 
-static inline void putbits(unsigned int n,unsigned int val,stream_t *str)
+static inline void putbits(unsigned int n,unsigned int val,outbits *str)
 {
   OD_ASSERT(n > 0);
   od_ec_enc_bits(str, bitreverse(val << (32 - n)), n);
 }
 
-static inline int get_bit_pos(stream_t *str)
+static inline int get_bit_pos(outbits *str)
 {
   return od_ec_enc_tell(str);
 }
 
-static inline void write_stream_pos(stream_t *stream, stream_pos_t *stream_pos)
+static inline void write_stream_pos(outbits *stream, stream_pos_t *stream_pos)
 {
   od_ec_enc_rollback(stream, stream_pos);
 }
 
-static inline void read_stream_pos(stream_pos_t *stream_pos, stream_t *stream)
+static inline void read_stream_pos(stream_pos_t *stream_pos, outbits *stream)
 {
   od_ec_enc_checkpoint(stream_pos, stream);
 }
