@@ -37,6 +37,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "getbits.h"
 #include "getvlc.h"
 #include "read_bits.h"
+#include "dct.h"
 #include "transform.h"
 #include "common_block.h"
 #include "inter_prediction.h"
@@ -62,21 +63,27 @@ void decode_and_reconstruct_block_intra (uint8_t *rec, int stride, int size, int
     int i,j,index;
     for (i=0;i<size;i+=size2){
       for (j=0;j<size;j+=size2){
+        int qsize;
         make_top_and_left(left_data,top_data,&top_left,rec,stride,&rec[i*stride+j],stride,i,j,ypos,xpos,size2,upright_available,downleft_available,1);
 
         get_intra_prediction(left_data,top_data,top_left,ypos+i,xpos+j,size2,pblock,intra_mode);
         index = 2*(i/size2) + (j/size2);
         dequantize (coeffq+index*size2*size2,rcoeff,qp,size2);
-        inverse_transform (rcoeff, rblock2, size2);
+        /*inverse_transform (rcoeff, rblock2, size2);*/
+        qsize = min(size2, MAX_QUANT_SIZE);
+        daala_inverse_transform(rblock2, size2, rcoeff, size2, size2, qsize);
         reconstruct_block(rblock2,pblock,&rec[i*stride+j],size2,stride);
       }
     }
   }
   else{
+    int qsize;
     make_top_and_left(left_data,top_data,&top_left,rec,stride,NULL,0,0,0,ypos,xpos,size,upright_available,downleft_available,0);
     get_intra_prediction(left_data,top_data,top_left,ypos,xpos,size,pblock,intra_mode);
     dequantize (coeffq,rcoeff,qp,size);
-    inverse_transform (rcoeff, rblock, size);
+    /*inverse_transform (rcoeff, rblock, size);*/
+    qsize = min(size, MAX_QUANT_SIZE);
+    daala_inverse_transform(rblock, size, rcoeff, size, size, qsize);
     reconstruct_block(rblock,pblock,rec,size,stride);
   }
 
@@ -96,9 +103,12 @@ void decode_and_reconstruct_block_inter (uint8_t *rec, int stride, int size, int
     int i,j,k,index;
     for (i=0;i<size;i+=size2){
       for (j=0;j<size;j+=size2){
+        int qsize;
         index = 2*(i/size2) + (j/size2);
         dequantize (coeffq+index*size2*size2,rcoeff,qp,size2);
-        inverse_transform (rcoeff, rblock2, size2);
+        /*inverse_transform (rcoeff, rblock2, size2);*/
+        qsize = min(size2, MAX_QUANT_SIZE);
+        daala_inverse_transform(rblock2, size2, rcoeff, size2, size2, qsize);
         /* Copy from compact block of quarter size to full size */
         for (k=0;k<size2;k++){
           memcpy(rblock+(i+k)*size+j,rblock2+k*size2,size2*sizeof(int16_t));
@@ -107,8 +117,11 @@ void decode_and_reconstruct_block_inter (uint8_t *rec, int stride, int size, int
     }
   }
   else{
+    int qsize;
     dequantize (coeffq,rcoeff,qp,size);
-    inverse_transform (rcoeff, rblock, size);
+    /*inverse_transform (rcoeff, rblock, size);*/
+    qsize = min(size, MAX_QUANT_SIZE);
+    daala_inverse_transform(rblock, size, rcoeff, size, size, qsize);
   }
   reconstruct_block(rblock,pblock,rec,size,stride);
 

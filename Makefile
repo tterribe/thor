@@ -4,6 +4,7 @@ DECODER_PROGRAM = build/Thordec
 CFLAGS += -std=c99 -g -O3 -Wall -pedantic -I common
 LDFLAGS = -lm
 
+
 ifeq ($(ARCH),neon)
         CFLAGS += -mfpu=neon
 endif
@@ -20,6 +21,7 @@ endif
 COMMON_SOURCES = \
 	common/common_block.c \
 	common/common_frame.c \
+	common/dct.c \
 	common/entcode.c \
 	common/transform.c \
 	common/intra_prediction.c \

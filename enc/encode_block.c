@@ -41,6 +41,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "write_bits.h"
 #include "putbits.h"
 #include "putvlc.h"
+#include "dct.h"
 #include "transform.h"
 #include "common_block.h"
 #include "inter_prediction.h"
@@ -1305,16 +1306,20 @@ int encode_and_reconstruct_block_intra (encoder_info_t *encoder_info, uint8_t *o
       int i,j,index=0;
       for (i=0;i<size;i+=size2){
         for (j=0;j<size;j+=size2){
+          int qsize;
 
           make_top_and_left(left_data,top_data,&top_left,rec,rec_stride,&rec_block[i*size+j],size,i,j,ypos,xpos,size2,upright_available,downleft_available,1);
 
           get_intra_prediction(left_data,top_data,top_left,ypos+i,xpos+j,size2,pblock,intra_mode);
           get_residual (block2, pblock, &orig[i*orig_stride+j], size2, orig_stride);
-          transform (block2, coeff, size2, encoder_info->params->encoder_speed > 1 || encoder_info->params->sync);
+          /*transform (block2, coeff, size2, encoder_info->params->encoder_speed > 1 || encoder_info->params->sync);*/
+          qsize = min(size2, MAX_QUANT_SIZE);
+          daala_transform(coeff, size2, block2, size2, size2, qsize);
           cbpbit = quantize (coeff, coeffq+index, qp, size2, coeff_type, rdoq);
           if (cbpbit){
             dequantize (coeffq+index, rcoeff, qp, size2);
             inverse_transform (rcoeff, rblock2, size2);
+            daala_inverse_transform(rblock2, size2, rcoeff, size2, size2, qsize);
           }
           else{
             memset(rblock2,0,size2*size2*sizeof(int16_t));
@@ -1328,15 +1333,19 @@ int encode_and_reconstruct_block_intra (encoder_info_t *encoder_info, uint8_t *o
       }
     }
     else{
+      int qsize;
       make_top_and_left(left_data,top_data,&top_left,rec,rec_stride,NULL,0,0,0,ypos,xpos,size,upright_available,downleft_available,0);
       get_intra_prediction(left_data,top_data,top_left,ypos,xpos,size,pblock,intra_mode);
       get_residual (block, pblock, orig, size, orig_stride);
 
-      transform (block, coeff, size, encoder_info->params->encoder_speed > 1 || encoder_info->params->sync);
+      /*transform (block, coeff, size, encoder_info->params->encoder_speed > 1 || encoder_info->params->sync);*/
+      qsize = min(size, MAX_QUANT_SIZE);
+      daala_transform(coeff, size, block, size, size, qsize);
       cbp = quantize (coeff, coeffq, qp, size, coeff_type, rdoq);
       if (cbp){
         dequantize (coeffq, rcoeff, qp, size);
         inverse_transform (rcoeff, rblock, size);
+        daala_inverse_transform(rblock, size, rcoeff, size, size, qsize);
         reconstruct_block (rblock, pblock, rec_block, size, size);
       }
       else{
@@ -1371,16 +1380,20 @@ int encode_and_reconstruct_block_inter (encoder_info_t *encoder_info, uint8_t *o
       int i,j,k,index=0;
       for (i=0;i<size;i+=size2){
         for (j=0;j<size;j+=size2){
+          int qsize;
 
           /* Copy from full size to compact block of quarter size */
           for (k=0;k<size2;k++){
             memcpy(&block2[k*size2],&block[(i+k)*size+j],size2*sizeof(int16_t));
           }
-          transform (block2, coeff, size2, size == 64 || encoder_info->params->encoder_speed > 1 || encoder_info->params->sync);
+          /*transform (block2, coeff, size2, size == 64 || encoder_info->params->encoder_speed > 1 || encoder_info->params->sync);*/
+          qsize = min(size2, MAX_QUANT_SIZE);
+          daala_transform(coeff, size2, block2, size2, size2, qsize);
           cbpbit = quantize (coeff, coeffq+index, qp, size2, coeff_type, rdoq);
           if (cbpbit){
             dequantize (coeffq+index, rcoeff, qp, size2);
             inverse_transform (rcoeff, rblock2, size2);
+            daala_inverse_transform(rblock2, size2, rcoeff, size2, size2, qsize);
           }
           else{
             memset(rblock2,0,size2*size2*sizeof(int16_t));
@@ -1397,11 +1410,15 @@ int encode_and_reconstruct_block_inter (encoder_info_t *encoder_info, uint8_t *o
       reconstruct_block (rblock, pblock, rec, size, size);
     }
     else{
-      transform (block, coeff, size, (size == 64 && encoder_info->params->encoder_speed > 0) || encoder_info->params->encoder_speed > 1 || encoder_info->params->sync);
+      int qsize;
+      /*transform (block, coeff, size, (size == 64 && encoder_info->params->encoder_speed > 0) || encoder_info->params->encoder_speed > 1 || encoder_info->params->sync);*/
+      qsize = min(size, MAX_QUANT_SIZE);
+      daala_transform(coeff, size, block, size, size, qsize);
       cbp = quantize (coeff, coeffq, qp, size, coeff_type, rdoq);
       if (cbp){
         dequantize (coeffq, rcoeff, qp, size);
         inverse_transform (rcoeff, rblock, size);
+        daala_inverse_transform(rblock, size, rcoeff, size, size, qsize);
         reconstruct_block (rblock, pblock, rec, size, size);
       }
       else{
@@ -2502,12 +2519,14 @@ int check_early_skip_sub_block (encoder_info_t *encoder_info, uint8_t *orig, int
         tmp[i*size2+j] = (block[(i2+0)*size+(j2+0)] + block[(i2+0)*size+(j2+1)] + block[(i2+1)*size+(j2+0)] + block[(i2+1)*size+(j2+1)] + 2)>>2;
       }
     }
-    transform(tmp, coeff, size2, encoder_info->params->encoder_speed > 1 || encoder_info->params->sync);
+    /*transform(tmp, coeff, size2, encoder_info->params->encoder_speed > 1 || encoder_info->params->sync);*/
+    daala_transform(coeff, size2, tmp, size2, size2, min(size2, MAX_QUANT_SIZE));
     cbp = check_early_skip_transform_coeff(coeff, qp, size2, 0.5*early_skip_threshold);
     thor_free(tmp);
   }
   else{
-    transform (block, coeff, size, encoder_info->params->encoder_speed > 1 || encoder_info->params->sync);
+    /*transform (block, coeff, size, encoder_info->params->encoder_speed > 1 || encoder_info->params->sync);*/
+    daala_transform(coeff, size, block, size, size, min(size, MAX_QUANT_SIZE));
     cbp = check_early_skip_transform_coeff(coeff, qp, size, early_skip_threshold);
   }
 
